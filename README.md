@@ -25,11 +25,11 @@ python TDTLinuxPWD.py -h
 ```
 ### Using the default wordlist
 ``` sh
-python TDTLinuxPWD.py -s /etc/shadown 
+python TDTLinuxPWD.py -s /etc/shadow 
 ```
 ### Using a personalized wordlist
 ``` sh
-python TDTLinuxPWD.py -s /etc/shadown -w /path/to/wordlist.txt 
+python TDTLinuxPWD.py -s /etc/shadow -w /path/to/wordlist.txt 
 ```
 That's all folks!
 
