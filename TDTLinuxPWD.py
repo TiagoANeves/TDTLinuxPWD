@@ -10,7 +10,7 @@ import sys
 import os
 from argparse import ArgumentParser
 
-#os.system("clear")
+os.system("clear")
 
 #Color scheme
 class bcolors:
@@ -42,13 +42,17 @@ parser = ArgumentParser()
 parser.add_argument("-s", "--shadow", help="shadow file")
 parser.add_argument("-w", "--wordlist", default="wordlist.txt", help="wordist file %s" %bcolors.ENDC)
 
+# Count wordlist password
+def countlines(textfile):
+	num_lines = len(open(textfile).readlines(  ))
+	return num_lines
+
 # Main function
 if __name__ == "__main__":
     try:
         banner()
         print "This program will check the users in the shadow file and use a wordlist to try crack the password hashes."
         print "If wordlist not especified, it will use the wordlist.txt by default."
-        #print bcolors.WARNING
         print bcolors.ENDC
         args = parser.parse_args()
     except:
@@ -59,6 +63,8 @@ if __name__ == "__main__":
         sys.exit()
     else:
         print bcolors.HEADER + "Starting the program...\n" + bcolors.ENDC
+	numlines = countlines(args.wordlist)
+	print bcolors.HEADER + "The file %s%s%s has %s%s%s passwords" %(bcolors.OKGREEN,args.wordlist,bcolors.HEADER,bcolors.OKGREEN,numlines,bcolors.HEADER) + bcolors.ENDC	
         try:
             fileshadow = open(args.shadow,'r')
         except:
@@ -71,26 +77,32 @@ if __name__ == "__main__":
                 hashes = userline[1].split("$")
                 salt = "$"+hashes[1]+"$"+hashes[2]+"$"
                 passfound = 0
-                print bcolors.WARNING + "\nBruteforcing password for the user %s" %userline[0] + bcolors.ENDC
+                print bcolors.WARNING + "\nBruteforcing password for the user %s%s" %(bcolors.OKGREEN,userline[0]) + bcolors.ENDC
                 try:
                     filewordlist = open(args.wordlist,'r')
                 except:
                     print "Error trying to open wordlist file"
                     sys.exit()
                 passwords = filewordlist.read().split('\n')
+		pwdcount = 0
                 for password in passwords:
-                    print bcolors.WARNING + "Trying the password %s" %password +"                        "+ bcolors.ENDC
-                    sys.stdout.write("\033[F") #Back to previous line
-                    sys.stdout.write("\033[k") #Clear line
-                    result = crypt.crypt(password, salt)
-                    if (result == userline[1]):
-                        sys.stdout.write("\r")
-                        sys.stdout.flush()
-                        print bcolors.OKBLUE + "Password found! "+password +"                       "+ bcolors.ENDC
-                        passfound = 1
-                        break
-                    else:
-                        sys.stdout.write("\r")
-                        sys.stdout.flush()
+		    try:
+		    	pwdcount += 1
+                    	print bcolors.WARNING + "Trying %s%s%s of %s%s%s passwords" %(bcolors.OKGREEN,pwdcount,bcolors.WARNING,bcolors.OKGREEN,numlines,bcolors.WARNING) + bcolors.ENDC
+                    	result = crypt.crypt(password, salt)
+                    	if (result == userline[1]):
+                        	sys.stdout.write("\r")
+                        	sys.stdout.flush()
+                        	print bcolors.OKBLUE + bcolors.BOLD + bcolors.UNDERLINE + "Password found: " + bcolors.OKGREEN + password + bcolors.ENDC
+                        	passfound = 1
+                        	break
+                    	else:
+                    		sys.stdout.write("\033[F") #Back to previous line
+                    		sys.stdout.write("\033[k") #Clear line
+                        	sys.stdout.write("\r")
+                        	sys.stdout.flush()
+		    except KeyboardInterrupt:
+			print bcolors.FAIL + "Bruteforcing interrupted by the user..." + bcolors.ENDC
+			break
                 if (passfound == 0):
                     print bcolors.FAIL + "Could not find the password for the user "+userline[0] + bcolors.ENDC

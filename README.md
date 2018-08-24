@@ -31,6 +31,8 @@ python TDTLinuxPWD.py -s /etc/shadow
 ``` sh
 python TDTLinuxPWD.py -s /etc/shadow -w /path/to/wordlist.txt 
 ```
+![Print](/images/Print.png)
+
 That's all folks!
 
 ## License
@@ -38,7 +40,7 @@ That's all folks!
 TDTLinuxPWD is licensed under the GNU GPL license. take a look at the [LICENSE](https://github.com/TiagoANeves/TDTLinuxPWD/blob/master/LICENSE) for more information.
 
 ## Version
-**Current version is 1.0**
+**Current version is 1.1.0**
 
 ## Credits
 - [Tiago Neves](https://github.com/TiagoANeves)
